@@ -1,5 +1,5 @@
 {
-  "name": "template-node",
+  "name": "sandbox",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NucleoidJS/template-node.git"
+    "url": "git+https://github.com/NucleoidJS/sandbox.git"
   },
   "author": "Nuc Team",
   "license": "Apache-2.0",
@@ -16,8 +16,16 @@
     "url": "https://github.com/NucleoidJS/template-node/issues"
   },
   "homepage": "https://github.com/NucleoidJS/template-node#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
+    "eslint-plugin-prettier": "^4.2.1",
+    "express": "^4.18.1",
+    "uuid": "^9.0.0"
+  },
   "devDependencies": {
-    "eslint": "^8.12.0",
+    "eslint": "8.22.0",
     "eslint-config-prettier": "^8.5.0",
     "mocha": "^9.2.2",
     "prettier": "^2.6.2"
