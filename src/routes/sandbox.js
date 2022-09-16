@@ -34,7 +34,10 @@ router.post("/sandbox", async (req, res) => {
   });
 });
 
-router.all("/sandbox/:id/*", async (req, res) => {
+router.all("/sandbox/:id", redirect);
+router.all("/sandbox/:id/*", redirect);
+
+const redirect = async (req, res) => {
   const { id } = req.params;
   const { method, body, url } = req;
 
@@ -57,6 +60,6 @@ router.all("/sandbox/:id/*", async (req, res) => {
       const { status, headers, data } = err.response;
       res.set(headers).status(status).send(data);
     });
-});
+};
 
 module.exports = router;
