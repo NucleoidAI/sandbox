@@ -2,9 +2,14 @@ const router = require("express").Router();
 const { spawn } = require("child_process");
 const uuid = require("uuid").v4;
 const axios = require("axios").default;
+const metrics = require("./metrics");
+const terminal = require("./terminal");
 
 let port = 4000;
 const map = {};
+
+router.use("/metrics", metrics);
+router.use("/terminal", terminal);
 
 router.post("/", async (req, res) => {
   const id = uuid(); //.replaceAll("-", "");
