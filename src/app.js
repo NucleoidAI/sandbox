@@ -8,6 +8,6 @@ const metrics = require("./routes/metrics");
 app.use(express.json());
 app.use(cors());
 app.use("/sandbox", sandbox);
-app.use("/metrics", metrics);
+app.use("/sandbox/metrics", metrics);
 
 module.exports = app;
