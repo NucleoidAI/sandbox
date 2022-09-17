@@ -28,6 +28,7 @@ router.post("/", async (req, res) => {
 
     count--;
     map.delete(id);
+    console.log(`Stop process with ${id}`);
     process.kill();
   }
 
@@ -42,6 +43,9 @@ router.post("/", async (req, res) => {
         prefix: `/sandbox/${id}`,
       })
       .then(() => {
+        console.log(
+          `Start process with ${id} - terminal: ${terminal}, openapi: ${openapi}`
+        );
         count++;
         map.set(id, { id, process, terminal, openapi, created: Date.now() });
         res.json({ id });
