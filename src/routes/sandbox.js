@@ -62,21 +62,22 @@ router.post("/", async (req, res) => {
   });
 });
 
-const redirect = async (req, res) => {
+router.all("/:id*", async (req, res) => {
   const { id } = req.params;
   const { method, body, url } = req;
 
   const sandbox = map.get(id);
-  const { openapi } = sandbox;
 
   if (!sandbox) {
     res.status(404).end();
     return;
   }
 
+  const { openapi } = sandbox;
+
   axios({
     method,
-    url: `http://localhost:${openapi}${url}`,
+    url: `http://localhost:${openapi}/sandbox${url}`,
     data: body,
   })
     .then(({ status, headers, data }) => {
@@ -86,9 +87,6 @@ const redirect = async (req, res) => {
       const { status, headers, data } = err.response;
       res.set(headers).status(status).send(data);
     });
-};
-
-router.all("/:id", redirect);
-router.all("/:id/*", redirect);
+});
 
 module.exports = router;
