@@ -3,10 +3,12 @@ const router = express.Router();
 const os = require("os");
 
 router.get("/", (req, res) => {
+  const free = os.freemem();
+  const total = os.totalmem();
   res.json({
-    free: os.freemem(),
-    total: os.totalmem(),
-    percentage: (os.freemem() / os.totalmem()) * 100,
+    free,
+    total,
+    percentage: ((total - free) / total) * 100,
   });
 });
 
