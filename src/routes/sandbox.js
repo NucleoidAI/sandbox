@@ -21,7 +21,14 @@ router.post("/", async (req, res) => {
   });
 
   if (count > 10) {
-    console.log("Killing");
+    const sandbox = [...map.values()].sort((a, b) =>
+      a.create > b.create ? -1 : 1
+    )[0];
+    const { id, process } = sandbox;
+
+    count--;
+    map.delete(id);
+    process.kill();
   }
 
   process.stdout.on("data", async () => {
@@ -36,7 +43,7 @@ router.post("/", async (req, res) => {
       })
       .then(() => {
         count++;
-        map.set(id, { process, terminal, openapi, created: Date.now() });
+        map.set(id, { id, process, terminal, openapi, created: Date.now() });
         res.json({ id });
       })
       .catch((err) => res.status(500).send(err));
