@@ -6,7 +6,7 @@ const axios = require("axios").default;
 let port = 4000;
 const map = {};
 
-router.post("/sandbox", async (req, res) => {
+router.post("/", async (req, res) => {
   const id = uuid(); //.replaceAll("-", "");
   const terminal = port++;
 
@@ -59,7 +59,7 @@ const redirect = async (req, res) => {
     });
 };
 
-router.all("/sandbox/:id", redirect);
-router.all("/sandbox/:id/*", redirect);
+router.all("/:id", redirect);
+router.all("/:id/*", redirect);
 
 module.exports = router;

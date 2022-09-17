@@ -3,9 +3,11 @@ const cors = require("cors");
 const app = express();
 
 const sandbox = require("./routes/sandbox");
+const metrics = require("./routes/metrics");
 
 app.use(express.json());
 app.use(cors());
-app.use(sandbox);
+app.use("/sandbox", sandbox);
+app.use("/metrics", metrics);
 
 module.exports = app;
