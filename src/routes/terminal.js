@@ -1,9 +1,9 @@
 const express = require("express");
 const map = require("../map");
 const router = express.Router();
-const { post } = require("axios").default;
+const axios = require("axios").default;
 
-router.post("/:id", (req, res) => {
+router.post("/:id", express.text({ type: "*/*" }), (req, res) => {
   const { id } = req.params;
   const { body } = req;
 
@@ -16,8 +16,46 @@ router.post("/:id", (req, res) => {
 
   const { terminal } = sandbox;
 
-  post(`http://localhost:${terminal}`, body)
+  axios
+    .post(`http://localhost:${terminal}`, body)
     .then(({ status, headers, data }) =>
+      res.set(headers).status(status).send(data)
+    )
+    .catch((err) => {
+      if (err.response) {
+        const { headers, status, data } = err.response;
+        res.set(headers).status(status).send(data);
+      } else {
+        res.status(500).json({
+          message: err.message,
+        });
+      }
+    });
+});
+
+router.all("/:id/*", (req, res) => {
+  const { id } = req.params;
+  const { method, body, url } = req;
+
+  const sandbox = map.get(id);
+
+  if (!sandbox) {
+    res.status(404).end();
+    return;
+  }
+
+  const { terminal } = sandbox;
+
+  axios({
+    method,
+    url: `http://localhost:${terminal}/${url
+      .substring(1)
+      .split("/")
+      .slice(1)
+      .join("/")}`,
+    data: body,
+  })
+    .then(({ headers, status, data }) =>
       res.set(headers).status(status).send(data)
     )
     .catch((err) => {
