@@ -4,16 +4,17 @@ const uuid = require("uuid").v4;
 const axios = require("axios").default;
 const metrics = require("./metrics");
 const terminal = require("./terminal");
+const map = require("../map");
+const express = require("express");
 
 let port = process.env.SANDBOX;
 const limit = process.env.LIMIT;
-const map = new Map();
 let count = 0;
 
 router.use("/metrics", metrics);
-router.use("/terminal", terminal);
+router.use("/terminal", express.text({ type: "*/*" }), terminal);
 
-router.post("/", async (req, res) => {
+router.post("/", (req, res) => {
   const id = uuid();
   const terminal = port++;
 
@@ -81,12 +82,18 @@ router.all("/:id*", async (req, res) => {
     url: `http://localhost:${openapi}/sandbox${url}`,
     data: body,
   })
-    .then(({ status, headers, data }) => {
-      res.set(headers).status(status).send(data);
-    })
+    .then(({ status, headers, data }) =>
+      res.set(headers).status(status).send(data)
+    )
     .catch((err) => {
-      const { status, headers, data } = err.response;
-      res.set(headers).status(status).send(data);
+      if (err.response) {
+        const { status, headers, data } = err.response;
+        res.set(headers).status(status).send(data);
+      } else {
+        res.status(500).json({
+          message: err.message,
+        });
+      }
     });
 });
 
