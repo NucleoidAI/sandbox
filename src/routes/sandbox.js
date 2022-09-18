@@ -5,9 +5,10 @@ const axios = require("axios").default;
 const metrics = require("./metrics");
 const terminal = require("./terminal");
 
-let count = 0;
-let port = 4000;
+let port = process.env.SANDBOX;
+const limit = process.env.LIMIT;
 const map = new Map();
+let count = 0;
 
 router.use("/metrics", metrics);
 router.use("/terminal", terminal);
@@ -17,10 +18,10 @@ router.post("/", async (req, res) => {
   const terminal = port++;
 
   const process = spawn("nuc", ["start", "--id", id, "--port", terminal], {
-    shell: true,
+    detached: true,
   });
 
-  if (count > 10) {
+  if (count > limit) {
     const sandbox = [...map.values()].sort((a, b) =>
       a.create > b.create ? -1 : 1
     )[0];
@@ -29,7 +30,7 @@ router.post("/", async (req, res) => {
     count--;
     map.delete(id);
     console.log(`Stop process with ${id}`);
-    process.kill();
+    process.kill("SIGKILL");
   }
 
   process.stdout.on("data", async () => {
@@ -54,7 +55,7 @@ router.post("/", async (req, res) => {
   });
 
   process.on("exit", (code) => {
-    if (code) {
+    if (code && !res.writableEnded) {
       res.status(500).json({
         message: "Problem occurred during spawning",
       });
