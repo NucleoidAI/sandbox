@@ -7,7 +7,7 @@ const terminal = require("./terminal");
 const map = require("../map");
 
 let port = process.env.SANDBOX;
-const limit = process.env.LIMIT;
+const threshold = process.env.THRESHOLD;
 let count = 0;
 
 router.use("/metrics", metrics);
@@ -21,7 +21,7 @@ router.post("/", (req, res) => {
     detached: true,
   });
 
-  if (count > limit) {
+  if (count > threshold) {
     const sandbox = [...map.values()].sort((a, b) =>
       a.create > b.create ? -1 : 1
     )[0];
@@ -29,7 +29,7 @@ router.post("/", (req, res) => {
 
     count--;
     map.delete(id);
-    console.log(`Stop process with ${id}`);
+    console.log(`Stop process with ${id} due to threshold`);
     process.kill("SIGKILL");
   }
 
@@ -50,6 +50,15 @@ router.post("/", (req, res) => {
         count++;
         map.set(id, { id, process, terminal, openapi, created: Date.now() });
         res.json({ id });
+
+        setTimeout(() => {
+          if (!process.killed) {
+            count--;
+            map.delete(id);
+            console.log(`Stop process with ${id} by scheduler`);
+            process.kill("SIGKILL");
+          }
+        }, 10 * 60 * 1000);
       })
       .catch((err) => res.status(500).send(err));
   });
