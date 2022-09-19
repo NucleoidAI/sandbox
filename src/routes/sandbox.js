@@ -5,7 +5,6 @@ const axios = require("axios").default;
 const metrics = require("./metrics");
 const terminal = require("./terminal");
 const map = require("../map");
-const express = require("express");
 
 let port = process.env.SANDBOX;
 const threshold = process.env.THRESHOLD;
@@ -32,7 +31,7 @@ router.post("/", (req, res) => {
     process.kill("SIGKILL");
   }
 
-  process.stdout.on("data", async () => {
+  process.stdout.on("data", () => {
     const openapi = port++;
 
     axios
