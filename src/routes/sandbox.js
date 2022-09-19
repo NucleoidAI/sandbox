@@ -86,6 +86,7 @@ router.all("/:id*", (req, res) => {
     method,
     url: `http://localhost:${openapi}/sandbox${url}`,
     data: body,
+    transformResponse: (x) => x,
   })
     .then(({ headers, status, data }) =>
       res.set(headers).status(status).send(data)
