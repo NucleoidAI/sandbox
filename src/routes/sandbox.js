@@ -5,10 +5,10 @@ const axios = require("axios").default;
 const metrics = require("./metrics");
 const terminal = require("./terminal");
 const map = require("../map");
+const express = require("express");
 
 let port = process.env.SANDBOX;
 const threshold = process.env.THRESHOLD;
-let count = 0;
 
 router.use("/metrics", metrics);
 router.use("/terminal", terminal);
@@ -21,13 +21,12 @@ router.post("/", (req, res) => {
     detached: true,
   });
 
-  if (count > threshold) {
+  if (map.size > threshold) {
     const sandbox = [...map.values()].sort((a, b) =>
       a.create > b.create ? -1 : 1
     )[0];
     const { id, process } = sandbox;
 
-    count--;
     map.delete(id);
     console.log(`Stop process with ${id} due to threshold`);
     process.kill("SIGKILL");
@@ -47,13 +46,11 @@ router.post("/", (req, res) => {
         console.log(
           `Start process with ${id} - terminal: ${terminal}, openapi: ${openapi}`
         );
-        count++;
         map.set(id, { id, process, terminal, openapi, created: Date.now() });
         res.json({ id });
 
         setTimeout(() => {
           if (!process.killed) {
-            count--;
             map.delete(id);
             console.log(`Stop process with ${id} by scheduler`);
             process.kill("SIGKILL");

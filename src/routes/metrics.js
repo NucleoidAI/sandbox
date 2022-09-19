@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const os = require("os");
+const map = require("../map");
 
 router.get("/", (req, res) => {
   const free = os.freemem();
@@ -9,6 +10,7 @@ router.get("/", (req, res) => {
     free,
     total,
     percentage: ((total - free) / total) * 100,
+    map: map.size,
   });
 });
 
