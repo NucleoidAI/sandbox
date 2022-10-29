@@ -17,7 +17,7 @@ router.post("/", (req, res) => {
   const terminal = port++;
 
   const process = spawn("nuc", ["start", "--id", id, "--port", terminal], {
-    detached: true,
+    detached: true, // Use "shell" for Windows
   });
 
   if (map.size > threshold) {
