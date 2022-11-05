@@ -31,7 +31,7 @@ router.post("/", (req, res) => {
     process.kill("SIGKILL");
   }
 
-  process.on("spawn", () => {
+  process.stdout.on("data", () => {
     const openapi = port++;
 
     axios
