@@ -32,7 +32,14 @@ router.post("/", (req, res) => {
   }
 
   process.stdout.on("data", () => {
-    const openapi = port++;
+    let openapi;
+
+    if (map.get(id)) {
+      return;
+    } else {
+      openapi = port++;
+      map.set(id, { id, process, terminal, openapi, created: Date.now() });
+    }
 
     axios
       .post(`http://localhost:${terminal}/openapi`, {
@@ -45,21 +52,26 @@ router.post("/", (req, res) => {
         console.log(
           `Start process with ${id} - terminal: ${terminal}, openapi: ${openapi}`
         );
-        map.set(id, { id, process, terminal, openapi, created: Date.now() });
-        res.json({ id });
 
-        setTimeout(() => {
-          if (!process.killed) {
-            map.delete(id);
-            console.log(`Stop process with ${id} by scheduler`);
-            process.kill("SIGKILL");
-          }
-        }, 10 * 60 * 1000);
+        res.json({ id });
       })
-      .catch((err) => res.status(500).send(err));
+      .catch((err) => {
+        console.log(`There is an error while starting OpenAPI in ${id}`);
+        res.status(500).send(err);
+      });
+
+    setTimeout(() => {
+      if (!process.killed) {
+        map.delete(id);
+        console.log(`Stop process with ${id} by scheduler`);
+        process.kill("SIGKILL");
+      }
+    }, 10 * 60 * 1000);
   });
 
-  process.on("exit", (code) => {
+  process.on("error", (code) => {
+    console.log(`There is an error while spawning for ${id}`);
+
     if (code && !res.writableEnded) {
       res.status(500).json({
         message: "Problem occurred during spawning",
