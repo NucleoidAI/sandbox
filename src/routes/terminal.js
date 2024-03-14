@@ -2,19 +2,23 @@ const express = require("express");
 const map = require("../map");
 const router = express.Router();
 const axios = require("axios").default;
+const nucleoid = require("../nucleoid");
+const port = require("../port");
 
-router.post("/:id", express.text({ type: "*/*" }), (req, res) => {
+router.post("/:id", express.text({ type: "*/*" }), async (req, res) => {
   const { id } = req.params;
   const { body } = req;
 
   const sandbox = map.get(id);
 
-  if (!sandbox) {
-    res.status(404).end();
-    return;
-  }
+  let terminal;
 
-  const { terminal } = sandbox;
+  if (!sandbox) {
+    terminal = port.inc();
+    await nucleoid.start(id, { terminal });
+  } else {
+    terminal = sandbox.terminal;
+  }
 
   axios
     .post(`http://localhost:${terminal}`, body)

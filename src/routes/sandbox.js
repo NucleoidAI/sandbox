@@ -1,83 +1,42 @@
 const router = require("express").Router();
-const { spawn } = require("child_process");
 const uuid = require("uuid").v4;
 const axios = require("axios").default;
 const metrics = require("./metrics");
 const terminal = require("./terminal");
 const map = require("../map");
-
-let port = process.env.SANDBOX;
-const threshold = process.env.THRESHOLD;
+const nucleoid = require("../nucleoid");
+const port = require("../port");
 
 router.use("/metrics", metrics);
 router.use("/terminal", terminal);
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const id = uuid();
-  const terminal = port++;
+  const terminal = port.inc();
 
-  const process = spawn("nuc", ["start", "--id", id, "--port", terminal], {
-    detached: true, // Use "shell" for Windows
-  });
+  const instance = await nucleoid.start(id, { terminal });
 
-  if (map.size > threshold) {
-    const sandbox = [...map.values()].sort((a, b) =>
-      a.create > b.create ? -1 : 1
-    )[0];
-    const { id, process } = sandbox;
+  const openapi = port.inc();
+  instance.openapi = openapi;
 
-    map.delete(id);
-    console.log(`Stop process with ${id} due to threshold`);
-    process.kill("SIGKILL");
-  }
+  axios
+    .post(`http://localhost:${terminal}/openapi`, {
+      ...req.body,
+      action: "start",
+      port: openapi,
+      prefix: `/sandbox/${id}`,
+    })
+    .then(() => {
+      console.log(
+        `Start process with ${id} - terminal: ${terminal}, openapi: ${openapi}`
+      );
 
-  process.stdout.on("data", () => {
-    let openapi;
-
-    if (map.get(id)) {
-      return;
-    } else {
-      openapi = port++;
-      map.set(id, { id, process, terminal, openapi, created: Date.now() });
-    }
-
-    axios
-      .post(`http://localhost:${terminal}/openapi`, {
-        ...req.body,
-        action: "start",
-        port: openapi,
-        prefix: `/sandbox/${id}`,
-      })
-      .then(() => {
-        console.log(
-          `Start process with ${id} - terminal: ${terminal}, openapi: ${openapi}`
-        );
-
-        res.json({ id });
-      })
-      .catch((err) => {
-        console.log(`There is an error while starting OpenAPI in ${id}`);
-        res.status(500).send(err);
-      });
-
-    setTimeout(() => {
-      if (!process.killed) {
-        map.delete(id);
-        console.log(`Stop process with ${id} by scheduler`);
-        process.kill("SIGKILL");
-      }
-    }, 10 * 60 * 1000);
-  });
-
-  process.on("error", (code) => {
-    console.log(`There is an error while spawning for ${id}`);
-
-    if (code && !res.writableEnded) {
-      res.status(500).json({
-        message: "Problem occurred during spawning",
-      });
-    }
-  });
+      res.json({ id });
+    })
+    .catch((err) => {
+      console.log(`There is an error while starting OpenAPI in ${id}`);
+      res.status(500).send(err);
+    });
 });
 
 router.all("/:id*", (req, res) => {
