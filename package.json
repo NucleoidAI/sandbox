@@ -1,10 +1,10 @@
 {
-  "name": "sandbox",
+  "name": "@nucleoidai/sandbox",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "exit 0"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/NucleoidJS/template-node#readme",
   "dependencies": {
-    "axios": "^0.27.2",
+    "axios": "^1.6.7",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "eslint-plugin-prettier": "^4.2.1",
