@@ -1,7 +1,7 @@
 const { spawn } = require("child_process");
 const map = require("./map");
 
-const THRESHOLD = process.env.THRESHOLD || 25;
+const THRESHOLD = process.env.THRESHOLD;
 
 function start(id, { terminal } = { terminal: 8448 }) {
   return new Promise((resolve, reject) => {

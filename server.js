@@ -5,4 +5,6 @@ if (process.env.DEBUG !== "true") {
   console.debug = () => {};
 }
 
-app.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT, () => {
+  console.log("Sandbox is started");
+});
