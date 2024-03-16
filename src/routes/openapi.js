@@ -1,14 +1,9 @@
 const router = require("express").Router();
 const uuid = require("uuid").v4;
 const axios = require("axios").default;
-const metrics = require("./metrics");
-const terminal = require("./terminal");
 const map = require("../map");
 const nucleoid = require("../nucleoid");
 const port = require("../port");
-
-router.use("/metrics", metrics);
-router.use("/terminal", terminal);
 
 router.post("/", async (req, res) => {
   const id = uuid();

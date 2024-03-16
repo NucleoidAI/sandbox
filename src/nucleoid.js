@@ -21,11 +21,14 @@ function start(id, { terminal } = { terminal: 8448 }) {
     map.set(id, instance);
 
     process.stdout.on("data", () => {
+      console.log(
+        `Process with ${id} is started with terminal port ${terminal}`
+      );
       resolve(instance);
     });
 
     process.on("error", () => {
-      console.log(`There is an error while spawning for ${id}`);
+      console.error(`There is an error while spawning for ${id}`);
       reject("Problem occurred during spawning");
     });
 
