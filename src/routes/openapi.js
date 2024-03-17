@@ -6,10 +6,10 @@ const nucleoid = require("../nucleoid");
 const port = require("../port");
 
 router.post("/", async (req, res) => {
-  const id = uuid();
+  const sessionId = uuid();
   const terminal = port.inc();
 
-  const instance = await nucleoid.start(id, { terminal });
+  const instance = await nucleoid.start(sessionId, { terminal });
 
   const openapi = port.inc();
   instance.openapi = openapi;
@@ -19,26 +19,26 @@ router.post("/", async (req, res) => {
       ...req.body,
       action: "start",
       port: openapi,
-      prefix: `/sandbox/${id}`,
+      prefix: `/sandbox/${sessionId}`,
     })
     .then(() => {
       console.log(
-        `Start process with ${id} - terminal: ${terminal}, openapi: ${openapi}`
+        `Start process with ${sessionId} - terminal: ${terminal}, openapi: ${openapi}`
       );
 
-      res.json({ id });
+      res.json({ id: sessionId });
     })
     .catch((err) => {
-      console.log(`There is an error while starting OpenAPI in ${id}`);
+      console.log(`There is an error while starting OpenAPI in ${sessionId}`);
       res.status(500).send(err);
     });
 });
 
-router.all("/:id*", (req, res) => {
-  const { id } = req.params;
+router.all("*", (req, res) => {
+  const { sessionId } = req.params;
   const { method, body, url } = req;
 
-  const sandbox = map.get(id);
+  const sandbox = map.get(sessionId);
 
   if (!sandbox) {
     res.status(404).end();

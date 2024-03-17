@@ -6,5 +6,5 @@ if (process.env.DEBUG !== "true") {
 }
 
 app.listen(process.env.PORT, () => {
-  console.log("Sandbox is started");
+  console.log("Nucleoid Sandbox is started");
 });
