@@ -7,7 +7,7 @@ const port = require("../port");
 
 const router = express.Router();
 
-router.post("/", express.text({ type: "*/*" }), async (req, res) => {
+router.post("/:sessionId", express.text({ type: "*/*" }), async (req, res) => {
   const { sessionId } = req.params;
   const { body } = req;
 

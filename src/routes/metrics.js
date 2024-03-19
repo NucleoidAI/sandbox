@@ -3,7 +3,7 @@ const router = express.Router();
 const os = require("os");
 const map = require("../map");
 
-router.get("/", (req, res) => {
+router.get("/metrics", (req, res) => {
   const free = os.freemem();
   const total = os.totalmem();
   res.json({

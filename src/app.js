@@ -9,10 +9,10 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use("/:sessionId", terminal);
-app.use("/:sessionId/openapi", openapi);
-app.use("/:sessionId/*", redirect);
-app.use("/metrics", metrics);
+app.use(openapi);
+app.use(terminal);
+app.use(redirect);
+app.use(metrics);
 app.use("*", (req, res) => res.status(404).end());
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => res.status(500).send(err));
