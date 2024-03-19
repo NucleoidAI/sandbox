@@ -4,9 +4,11 @@ const terminal = require("./routes/terminal");
 const redirect = require("./routes/redirect");
 const openapi = require("./routes/openapi");
 const metrics = require("./routes/metrics");
+const morgan = require("morgan");
 
 const app = express();
 
+app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cors());
 app.use(openapi);

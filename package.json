@@ -25,6 +25,7 @@
     "dotenv": "^16.0.2",
     "eslint-plugin-prettier": "^4.2.1",
     "express": "^4.18.3",
+    "morgan": "^1.10.0",
     "uuid": "^9.0.0",
     "yargs": "^17.7.2"
   },
