@@ -4,7 +4,7 @@ const express = require("express");
 
 const router = express.Router();
 
-router.all("/:sessionId/*", (req, res) => {
+router.all("/:sessionId*", (req, res) => {
   const { sessionId } = req.params;
   const { method, body, url } = req;
 
