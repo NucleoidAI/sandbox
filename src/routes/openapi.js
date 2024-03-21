@@ -4,7 +4,7 @@ const axios = require("axios").default;
 const nucleoid = require("../nucleoid");
 const port = require("../port");
 
-router.post("/openapi", async (req, res) => {
+router.post("/", async (req, res) => {
   const sessionId = uuid();
   const terminal = port.inc();
 
@@ -16,9 +16,9 @@ router.post("/openapi", async (req, res) => {
   axios
     .post(`http://localhost:${terminal}/openapi`, {
       ...req.body,
-      action: "start",
-      port: openapi,
-      prefix: `/sandbox/${sessionId}`,
+      "x-nuc-action": "start",
+      "x-nuc-port": openapi,
+      "x-nuc-prefix": `/sandbox/${sessionId}`,
     })
     .then(() => {
       console.log(
@@ -28,7 +28,7 @@ router.post("/openapi", async (req, res) => {
       res.json({ id: sessionId });
     })
     .catch((err) => {
-      console.log(`There is an error while starting OpenAPI in ${sessionId}`);
+      console.error(`There is an error while starting OpenAPI in ${sessionId}`);
       res.status(500).send(err);
     });
 });
