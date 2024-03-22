@@ -3,9 +3,6 @@
   "version": "1.0.5",
   "description": "",
   "main": "index.js",
-  "bin": {
-    "sandbox": "bin.js"
-  },
   "scripts": {
     "test": "exit 0"
   },

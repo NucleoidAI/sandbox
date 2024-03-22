@@ -8,10 +8,10 @@ router.post("/", async (req, res) => {
   const sessionId = uuid();
   const terminal = port.inc();
 
-  const instance = await nucleoid.start(sessionId, { terminal });
+  const session = await nucleoid.start(sessionId, { terminal });
 
   const openapi = port.inc();
-  instance.openapi = openapi;
+  session.openapi = openapi;
 
   axios
     .post(`http://localhost:${terminal}/openapi`, {

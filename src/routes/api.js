@@ -8,14 +8,14 @@ router.all("/:sessionId*", (req, res) => {
   const { sessionId } = req.params;
   const { method, body, url } = req;
 
-  const instance = map.get(sessionId);
+  const session = map.get(sessionId);
 
-  if (!instance) {
+  if (!session) {
     res.status(404).end();
     return;
   }
 
-  const { openapi } = instance;
+  const { openapi } = session;
 
   axios({
     method,

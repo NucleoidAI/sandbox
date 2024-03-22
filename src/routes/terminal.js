@@ -11,15 +11,15 @@ router.post("/:sessionId", express.text({ type: "*/*" }), async (req, res) => {
   const { sessionId } = req.params;
   const { body } = req;
 
-  const sandbox = map.get(sessionId);
+  const session = map.get(sessionId);
 
   let terminal;
 
-  if (!sandbox) {
+  if (!session) {
     terminal = port.inc();
     await nucleoid.start(sessionId, { terminal });
   } else {
-    terminal = sandbox.terminal;
+    terminal = session.terminal;
   }
 
   axios
