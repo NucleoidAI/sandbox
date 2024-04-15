@@ -23,7 +23,9 @@ router.post("/:sessionId", express.text({ type: "*/*" }), async (req, res) => {
   }
 
   axios
-    .post(`http://localhost:${terminal}`, body)
+    .post(`http://localhost:${terminal}`, body, {
+      headers: req.headers,
+    })
     .then(({ status, headers, data }) =>
       res.set(headers).status(status).send(data)
     )
