@@ -26,14 +26,12 @@ router.all("/:sessionId*", (req, res) => {
     .then(({ headers, status, data }) =>
       res.set(headers).status(status).send(data)
     )
-    .catch((err) => {
-      if (err.response) {
-        const { headers, status, data } = err.response;
+    .catch(({ response, message }) => {
+      if (response) {
+        const { headers, status, data } = response;
         res.set(headers).status(status).send(data);
       } else {
-        res.status(500).json({
-          message: err.message,
-        });
+        res.status(500).json({ message });
       }
     });
 });

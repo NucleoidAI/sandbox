@@ -27,9 +27,15 @@ router.post("/", async (req, res) => {
 
       res.json({ id: sessionId });
     })
-    .catch((err) => {
+    .catch(({ response, message }) => {
       console.error(`There is an error while starting OpenAPI in ${sessionId}`);
-      res.status(500).send(err);
+
+      if (response) {
+        const { headers, status, data } = response;
+        res.set(headers).status(status).send(data);
+      } else {
+        res.status(500).json({ message });
+      }
     });
 });
 
