@@ -7,7 +7,7 @@ function start(id, { terminal } = { terminal: 8448 }) {
   return new Promise((resolve, reject) => {
     const process = spawn(
       "nuc",
-      ["start", "--id", id, "--terminal-port", terminal],
+      ["start", "--silence", "--id", id, "--terminal-port", terminal],
       {
         detached: true, // Use "shell" for Windows
       }
